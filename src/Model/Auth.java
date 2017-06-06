@@ -6,6 +6,10 @@ public class Auth extends Identified{
     public String Name;
     public String Password;
 
+    public Auth() {
+        GenerateId();
+    }
+
     public Auth(String name, String password) {
         GenerateId();
         Name = name;
