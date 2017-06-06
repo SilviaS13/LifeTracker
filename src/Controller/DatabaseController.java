@@ -276,6 +276,4 @@ public class DatabaseController {
         try { con.close(); } catch(SQLException se) { /*can't do anything */ }
         try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
     }
-
-
 }
