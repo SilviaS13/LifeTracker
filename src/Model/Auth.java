@@ -19,7 +19,8 @@ public class Auth extends Identified{
     public Auth(Long id, String password) {
         Id = id;
         Password = password;
-        User user = DatabaseController.GetUser(Id.toString());
+        DatabaseController db = DatabaseController.getInstance();
+        User user = db.GetUser(Id.toString());
         Name = user.Name;
     }
 }

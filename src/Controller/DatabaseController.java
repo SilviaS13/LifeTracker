@@ -37,13 +37,14 @@ public class DatabaseController {
                 localInstance = instance;
                 if (localInstance == null) {
                     instance = localInstance = new DatabaseController();
+                    instance.DatabaseConnect();
                 }
             }
         }
         return localInstance;
     }
 
-    public static void DatabaseConnect(){
+    public void DatabaseConnect(){
         // opening database connection to MySQL server
         try {
             con = DriverManager.getConnection(url, user, password);
@@ -56,7 +57,7 @@ public class DatabaseController {
     }
 
     //всякие трайкэтчи и проверки на адекватность параметров должны быть в MainController, а не здесь
-    public static Auth GetAuths(String userid){
+    public  Auth GetAuths(String userid){
         Auth auth = new Auth();
         query = "SELECT Pass FROM User WHERE id="+userid+";";
         try {
@@ -70,7 +71,7 @@ public class DatabaseController {
         return auth;
     }
 
-    public static Auth[] GetAuths() {
+    public  Auth[] GetAuths() {
         Auth res = new Auth();
         ArrayList<Auth> auts = new ArrayList<Auth>();
         query = "SELECT Pass FROM Auth;";
@@ -87,12 +88,12 @@ public class DatabaseController {
         return auts.toArray(a);
     }
 
-    public static User GetUser(String userid) {
+    public  User GetUser(String userid) {
         User res = new User("Silvia");
         res.FriendsId = new Long[] {123L, 358L};
         return res;
     } //yep, like this
-    public static Activity GetActivity(String activityid) {
+    public  Activity GetActivity(String activityid) {
         Activity res = new Activity();
         query = "SELECT Name FROM Activity WHERE id="+activityid+";";
         try{
@@ -107,7 +108,7 @@ public class DatabaseController {
         }
         return res;
     }
-    public static Activity[] GetActivities(String userid) {
+    public  Activity[] GetActivities(String userid) {
         Activity res = new Activity();
         ArrayList<Activity> acts = new ArrayList<Activity>();
         query = "SELECT Name FROM Activity WHERE id_User="+userid+";";
@@ -124,7 +125,7 @@ public class DatabaseController {
         Activity[] a = new Activity[acts.size()];
         return acts.toArray(a);
     }
-    public static Check GetCheck(String checkid) {
+    public  Check GetCheck(String checkid) {
         Check res = new Check(Long.parseLong(checkid));
         query = "SELECT Date FROM Check WHERE id="+checkid+";";
         try {
@@ -138,7 +139,7 @@ public class DatabaseController {
         }        
         return res;
     }
-    public static Check[] GetChecks(String activityid) {
+    public  Check[] GetChecks(String activityid) {
         Check res = new Check(Long.parseLong(activityid));
         ArrayList<Check> chks = new ArrayList<Check>();
         query = "SELECT Date FROM Check WHERE id_Activity="+activityid+";";
@@ -155,7 +156,7 @@ public class DatabaseController {
         Check[] c = new Check[chks.size()];
         return chks.toArray(c);
     }
-    public static Badge[] GetBadges() {
+    public  Badge[] GetBadges() {
         Badge res = new Badge(" ",0);
         ArrayList<Badge> badges = new ArrayList<Badge>();
         query = "SELECT Name, Points FROM Badge;";
@@ -175,7 +176,7 @@ public class DatabaseController {
     }
 
     //POST (new)
-    public static void PostAuth(Auth gotten) {
+    public  void PostAuth(Auth gotten) {
         query = "INSERT INTO User (id, Name, Pass) VALUES ("+ gotten.Id+", "+gotten.Name+ ", "+gotten.Password+");";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -183,7 +184,7 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    public static void PostUser(User user) {
+    public  void PostUser(User user) {
         query = "INSERT INTO User (Lvl, Xp) VALUES ("+ user.Level+", "+user.Experience+ ") WHERE id ="+user.Id+";";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -191,7 +192,7 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    public static void PostActivity(Activity activity) {
+    public  void PostActivity(Activity activity) {
         query = "INSERT INTO Activity (id, id_User, Name) VALUES ("+ activity.Id+", "+activity.UserId+ ", "+activity.Name+");";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -199,7 +200,7 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    public static void PostCheck(Check check) {
+    public  void PostCheck(Check check) {
         query = "INSERT INTO Check (id, id_Activity, Date) VALUES ("+ check.Id+", "+check.ActivityId+ ", "+check.Date+");";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -207,14 +208,18 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    /*
+
     public  void PostFriend(Long id, Long friendId) {
-        query = "INSERT INTO User (id, Name, Pass) VALUES ("+ gotten.Id+", "+gotten.Name+ ", "+gotten.Password+");";
-        rs = stmt.executeUpdate(query);
-    }*/
+        query = "INSERT INTO Followers (id, id_UserWatcher, id_UserWatching) VALUES ("+ id+", "+friendId+ ");";
+        try {
+            rsIUD = stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     //PUT (update)
-    public static void PutAuth(Auth auth) {
+    public  void PutAuth(Auth auth) {
         query = "UPDATE User SET (Name, Pass) VALUES ( "+auth.Name+ ", "+auth.Password+") WHERE id="+ auth.Id+";";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -223,7 +228,7 @@ public class DatabaseController {
         }
     }
 
-    public static void PutUser(User user) {
+    public  void PutUser(User user) {
         query = "";//!
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -231,7 +236,7 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    public static void PutActivity(Activity activity) {
+    public  void PutActivity(Activity activity) {
         query = "UPDATE Activity SET (id_User, Name) VALUES ("+ activity.Id+", "+activity.UserId+ ") WHERE id="+ activity.UserId+";";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -241,7 +246,7 @@ public class DatabaseController {
     }
 
     //DELETE
-    public static void DeleteUser(String userid) {
+    public  void DeleteUser(String userid) {
         query = "DELETE FROM User WHERE id="+ userid+";";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -249,7 +254,7 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    public static void DeleteActivity(String activityid) {
+    public  void DeleteActivity(String activityid) {
         query = "DELETE FROM Activity WHERE id="+ activityid+";";
         try {
             rsIUD = stmt.executeUpdate(query);
@@ -257,15 +262,20 @@ public class DatabaseController {
             e.printStackTrace();
         }
     }
-    /*
-    public  void DeleteFriend(Long id, Long friendId) {
-    }*/
 
-    public static void CloseConnection(){
+    public  void DeleteFriend(Long id, Long friendId) {
+        query = "DELETE FROM Followers WHERE id_UserWatcher="+ id+", id_UserWatching="+friendId+ ";";
+        try {
+            rsIUD = stmt.executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public  void CloseConnection(){
         try { con.close(); } catch(SQLException se) { /*can't do anything */ }
         try { stmt.close(); } catch(SQLException se) { /*can't do anything */ }
     }
 
-    public static void PostFriend(Long id, Long aLong) {
-    }
+
 }
